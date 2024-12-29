@@ -67,8 +67,9 @@ def send_rewards_claim_request(initdata):
 
 # Main script logic
 def main():
-    # Ask user for initdata value
-    initdata = input("Enter the initdata value (query_id, user, auth_date, etc.): ")
+    # Read initdata from 'data.txt'
+    with open('data.txt', 'r') as file:
+        initdata_list = file.readlines()
 
     amount = 5000  # Fixed amount for tap requests
     rest_time = 5 * 60  # 5 minutes in seconds
@@ -76,16 +77,21 @@ def main():
     print("Starting automated script... Press CTRL+C to stop.")
     
     while True:
-        # Task 1: Tap Request
-        print("Sending TAP request...")
-        send_tap_request(amount, initdata)
-        
-        # Task 2: Rewards Claim Request
-        print("Sending REWARDS CLAIM request...")
-        send_rewards_claim_request(initdata)
-        
-        # Wait for 5 minutes
-        print(f"Tasks completed. Sleeping for {rest_time // 60} minutes...")
+        # Loop through all initdata (accounts)
+        for initdata in initdata_list:
+            initdata = initdata.strip()  # Remove any extra whitespace or newline characters
+            print(f"Processing account with initdata: {initdata}")
+            
+            # Task 1: Tap Request
+            print("Sending TAP request...")
+            send_tap_request(amount, initdata)
+            
+            # Task 2: Rewards Claim Request
+            print("Sending REWARDS CLAIM request...")
+            send_rewards_claim_request(initdata)
+
+        # Wait for 5 minutes after processing all accounts
+        print(f"Completed tasks for all accounts. Sleeping for {rest_time // 60} minutes...")
         time.sleep(rest_time)
 
 # Run the script
